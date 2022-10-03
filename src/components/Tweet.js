@@ -1,10 +1,10 @@
 import { connect } from "react-redux";
 import { formatTweet } from "../utils/helpers";
 import {
-  TiArrowBackOutling,
+  TiArrowBackOutline,
   TiHeartOutline,
   TiHeartFullOutline,
-} from "react-icons";
+} from "react-icons/ti";
 import { formatDate } from "../utils/helpers";
 
 const Tweet = (props) => {
@@ -13,6 +13,11 @@ const Tweet = (props) => {
   const toParent = (e, id) => {
     e.preventDefault();
     // TODO: Redirect to parent tweet
+  };
+
+  const handleLike = (e) => {
+    e.preventDefault();
+    // TODO: Handle like to tweet
   };
 
   if (props.tweet === null) {
@@ -26,17 +31,32 @@ const Tweet = (props) => {
     <div className="tweet">
       <img src={avatar} alt={`Avatar of ${name}`} className="avatar" />
       <div className="tweet-info">
-        <span>{name}</span>
-        <div>{formatDate(timestamp)}</div>
-        {parent && (
-          <button
-            className="replying-to"
-            onClick={(e) => toParent(e, parent.id)}
-          >
-            Replying to @{parent.author}
+        <div>
+          <span>{name}</span>
+          <div>{formatDate(timestamp)}</div>
+          {parent && (
+            <button
+              className="replying-to"
+              onClick={(e) => toParent(e, parent.id)}
+            >
+              Replying to @{parent.author}
+            </button>
+          )}
+          <p>{text}</p>
+        </div>
+
+        <div className="tweet-icons">
+          <TiArrowBackOutline className="tweet-icon" />
+          <span>{replies !== 0 && replies}</span>
+          <button className="heart-button" onClick={handleLike}>
+            {hasLiked === true ? (
+              <TiHeartFullOutline color="e0245e" className="tweet-icon" />
+            ) : (
+              <TiHeartOutline className="tweet-icon" />
+            )}
           </button>
-        )}
-        <p>{text}</p>
+          <span>{(likes !== 0) & likes}</span>
+        </div>
       </div>
     </div>
   );
