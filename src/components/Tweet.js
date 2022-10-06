@@ -1,24 +1,21 @@
 import { connect } from "react-redux";
-import { formatTweet } from "../utils/helpers";
+import { formatTweet, formatDate } from "../utils/helpers";
 import {
   TiArrowBackOutline,
   TiHeartOutline,
   TiHeartFullOutline,
 } from "react-icons/ti";
-import { formatDate } from "../utils/helpers";
 import { handleToggleTweet } from "../actions/tweets";
+import { useNavigate, Link } from "react-router-dom";
 
 const Tweet = (props) => {
-  console.log(props);
-
-  const toParent = (e, id) => {
-    e.preventDefault();
-    // TODO: Redirect to parent tweet
-  };
+  const navigate = useNavigate();
 
   const handleLike = (e) => {
     e.preventDefault();
+
     const { dispatch, tweet, authedUser } = props;
+
     dispatch(
       handleToggleTweet({
         id: tweet.id,
@@ -28,15 +25,30 @@ const Tweet = (props) => {
     );
   };
 
+  const toParent = (e, id) => {
+    e.preventDefault();
+
+    navigate(`/tweet/${id}`);
+  };
+
   if (props.tweet === null) {
-    return <p>This Tweet does not exist.</p>;
+    return <p>This Tweet doesn't exist</p>;
   }
 
-  const { name, avatar, timestamp, text, hasLiked, likes, replies, parent } =
-    props.tweet;
+  const {
+    name,
+    avatar,
+    timestamp,
+    text,
+    hasLiked,
+    likes,
+    replies,
+    id,
+    parent,
+  } = props.tweet;
 
   return (
-    <div className="tweet">
+    <Link to={`/tweet/${id}`} className="tweet">
       <img src={avatar} alt={`Avatar of ${name}`} className="avatar" />
       <div className="tweet-info">
         <div>
@@ -52,27 +64,25 @@ const Tweet = (props) => {
           )}
           <p>{text}</p>
         </div>
-
         <div className="tweet-icons">
           <TiArrowBackOutline className="tweet-icon" />
           <span>{replies !== 0 && replies}</span>
           <button className="heart-button" onClick={handleLike}>
             {hasLiked === true ? (
-              <TiHeartFullOutline color="e0245e" className="tweet-icon" />
+              <TiHeartFullOutline color="#e0245e" className="tweet-icon" />
             ) : (
               <TiHeartOutline className="tweet-icon" />
             )}
           </button>
-          <span>{(likes !== 0) & likes}</span>
+          <span>{likes !== 0 && likes}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
 const mapStateToProps = ({ authedUser, users, tweets }, { id }) => {
   const tweet = tweets[id];
-
   const parentTweet = tweet ? tweets[tweet.replyingTo] : null;
 
   return {
